@@ -53,5 +53,5 @@ function gamePlay(choiceUser,choiceComputer){
   }
 
 }
-
-console.log(gamePlay(userChoice,compChoice));
+//Calling main function to execute the whole game
+gamePlay(userChoice,compChoice)
