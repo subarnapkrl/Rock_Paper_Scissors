@@ -1,57 +1,140 @@
-//Random Pick from Computer
-
-function computerPlay(){
-    let computerChoice=Math.floor(Math.random()*3);
-    if(computerChoice==0){
-        return `rock`;
-    }
-    else if(computerChoice==1){
-        return `paper`;
-    }
-    else if(computerChoice==2){
-        return `scissors`;
-    }
-    else{
-        console.log("Invalid ");
+// computer play that is randomly generated each time called
+function computerPlay() {
+    let rock = "Rock";
+    let paper = "Paper";
+    let scissors = "Scissors";
+    let getRandomValue = Math.random();
+    if (getRandomValue <= 0.33) {
+        return rock;
+    } else if (getRandomValue <= 0.66) {
+        return paper;
+    } else {
+        return scissors;
     }
 }
 
-let compChoice=computerPlay();
-console.log("Computer Choose:-"+compChoice);
+// the game start
+function game() {
+    let playerWin = 0;
+    let computerWin = 0;
+    let gameWinner = "";
 
+    //  Add event listeners for all three buttons/run round on click/track and end game
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            playerSelection = button.className;
+            const computerSelection = computerPlay();
+            battleWinText.textContent = (playRound(playerSelection, computerSelection));
+            playerWinText.textContent = "Player Win totals: " + playerWin;
+            computerWinText.textContent = "Computer Win totals: " + computerWin;
+            endGame();
+        })
+    })
 
-//Function to make user choose between Rock, Paper & SCissors
-let userChoice=prompt("Please choose between Rock , Paper & Scissors:-");
-userChoice=userChoice.toLowerCase();
-console.log("You Choose:-"+userChoice);
+        // play the round and determine winner
+        function playRound(playerSelection, computerSelection) {
+            let tie = "It's a Tie! You selected " + playerSelection + " and the computer selected " + computerSelection + ".";
+            let paperBeatRock = "You Win!  You selected " + playerSelection + " and the computer selected " + computerSelection + ".";
+            let scissorsBeatPaperLoss = "You lose!  You selected " + playerSelection + " and the computer selected " + computerSelection + ".";
+            let paperBeatRockLoss = "You lose!  You selected " + playerSelection + " and the computer selected " + computerSelection + ".";
+            let rockBeatScissors = "You Win!  You selected " + playerSelection + " and the computer selected " + computerSelection + ".";
+            let rockBeatScissorsLoss = "You lose!  You selected " + playerSelection + " and the computer selected " + computerSelection + ".";
+            let scissorsBeatPaper = "You Win!  You selected " + playerSelection + " and the computer selected " + computerSelection + ".";
 
+            if (playerSelection === computerSelection) {
+                return tie;
+            } else if ((playerSelection === "Paper") && (computerSelection === "Rock")) {
+                playerWin++;
+                return paperBeatRock;
+            } else if ((playerSelection === "Paper") && (computerSelection === "Scissors")) {
+                computerWin++;
+                return scissorsBeatPaperLoss;
+            } else if ((playerSelection === "Rock") && (computerSelection === "Paper")) {
+                computerWin++;
+                return paperBeatRockLoss;
+            } else if ((playerSelection === "Rock") && (computerSelection === "Scissors")) {
+                playerWin++;
+                return rockBeatScissors;
+            } else if ((playerSelection === "Scissors") && (computerSelection === "Rock")) {
+                computerWin++;
+                return rockBeatScissorsLoss;
+            } else {
+                playerWin++;
+                return scissorsBeatPaper;
+            }
+        }
+    
+    //  create div DOM for all results
+    const container = document.querySelector("#container");
+    const resultsDiv = document.createElement("div");
+    resultsDiv.style.marginTop = "20px";
+    container.appendChild(resultsDiv);
 
-//Gamplay Function to determine the winner
-function gamePlay(choiceUser,choiceComputer){
-  if(choiceUser==choiceComputer){
-      return `It's a TIE! YOU CHOSE ${choiceUser} and COMPUTER CHOSE ${choiceComputer}`;
-  }
-  else if(choiceUser=="rock" && choiceComputer=="paper"){
-      return `Computer Won! ${choiceComputer} beats ${choiceUser}`;
-  }
-  else if(choiceUser=="rock" && choiceComputer=="scissors"){
-      return `You Won! ${choiceUser} beats ${choiceComputer}`;
-  }
-  else if(choiceUser=="paper" && choiceComputer=="rock"){
-      return `You Won! ${choiceUser} beats ${choiceComputer}`;
-  }
-  else if(choiceUser=="paper" && choiceComputer=="scissors"){
-      return `Computer Won! ${choiceComputer} beats ${choiceUser} `;
-  }
-  else if(choiceUser=="scissors" && choiceComputer=="rock"){
-      return `Computer Won! ${choiceComputer} beats ${choiceUser}`;
-  }
-  else if(choiceUser=="scissors" && choiceComputer=="paper"){
-      return `You Won! ${choiceUser} beats ${choiceComputer}`;
-  }else{
-      return `Try Again!`;
-  }
+    //  create player win tracking DOM 
+    const playerWinText = document.createElement("p");
+    playerWinText.style.color = "blue";
+    playerWinText.textContent = "Player Win totals: " + playerWin;
+    resultsDiv.appendChild(playerWinText);
 
+    //  create computer win tracking DOM
+    const computerWinText = document.createElement("p");
+    computerWinText.style.color = "blue";
+    computerWinText.textContent = "Computer Win totals: " + computerWin;
+    resultsDiv.appendChild(computerWinText);
+
+    //  create battle win text DOM
+    const battleWinText = document.createElement("p");
+    battleWinText.style.color = "black";
+    resultsDiv.appendChild(battleWinText);
+    
+    //  create game win text DOM
+    const gameWinText = document.createElement("p");
+    gameWinText.style.color = "orange";
+    gameWinText.textContent = gameWinner;
+    resultsDiv.appendChild(gameWinText);
+
+    //  determine who won to five points first
+    function endGame() {
+        if (playerWin == 5) {
+            gameWinner = "YOU WIN!";
+            gameWinText.textContent = gameWinner;
+            
+            //  disable game buttons
+            document.getElementById("1").disabled = true;
+            document.getElementById("2").disabled = true;
+            document.getElementById("3").disabled = true;
+            
+            //  create new DOM button to replay
+            const playAgainButton = document.createElement("button");
+            playAgainButton.textContent = "Play Again!";
+            resultsDiv.appendChild(playAgainButton);
+            
+            //  if clicked, reload page
+            playAgainButton.addEventListener('click', () => {
+                location.reload();
+                })
+        } else if (computerWin == 5) {
+            gameWinner = "COMPUTER WINS!";
+            gameWinText.textContent = gameWinner;
+            
+            //  disable game buttons
+            document.getElementById("1").disabled = true;
+            document.getElementById("2").disabled = true;
+            document.getElementById("3").disabled = true;
+            
+            //  create new DOM button to replay
+            const playAgainButton = document.createElement("button");
+            playAgainButton.textContent = "Play Again!";
+            resultsDiv.appendChild(playAgainButton);
+            
+            //  if clicked, reload page
+            playAgainButton.addEventListener('click', () => {
+                location.reload();
+                })
+        }   
+    }
 }
-//Calling main function to execute the whole game
-gamePlay(userChoice,compChoice)
+
+//  function call to start the game
+game();
